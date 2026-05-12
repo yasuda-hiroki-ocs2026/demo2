@@ -1,0 +1,482 @@
+<!-- src/main/resources/static/battle.html -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>天気 Hit&Blow</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                180deg,
+                #87ceeb 0%,
+                #dff6ff 50%,
+                #ffffff 100%
+            );
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 100vh;
+
+            overflow: hidden;
+        }
+
+        .container {
+
+            width: 500px;
+
+            background: rgba(255,255,255,0.9);
+
+            backdrop-filter: blur(10px);
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+
+            text-align: center;
+        }
+
+        h1 {
+
+            color: #2d3436;
+
+            margin-bottom: 25px;
+
+            font-size: 38px;
+        }
+
+        .weather-box {
+
+            background: linear-gradient(
+                135deg,
+                #74b9ff,
+                #a29bfe
+            );
+
+            color: white;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+
+            font-size: 18px;
+
+            line-height: 2;
+
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .weather-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-bottom: 15px;
+        }
+
+        .weather-item {
+
+            background: rgba(255,255,255,0.25);
+
+            padding: 15px;
+
+            border-radius: 14px;
+
+            text-align: center;
+
+            backdrop-filter: blur(5px);
+        }
+
+        .select-group {
+
+            margin-bottom: 20px;
+
+            text-align: left;
+        }
+
+        .icon {
+
+            font-size: 28px;
+
+            margin-bottom: 8px;
+        }
+
+        label {
+
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-weight: bold;
+
+            color: #444;
+
+            font-size: 14px;
+
+            opacity: 0.9;
+
+        }
+
+        .value {
+
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+        .hint-box {
+
+            margin-top: 10px;
+
+            padding: 12px;
+
+            background: rgba(255,255,255,0.2);
+
+            border-radius: 12px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+        }
+
+        select {
+
+            width: 100%;
+
+            padding: 14px 16px;
+
+            border-radius: 14px;
+
+            border: 2px solid #dfe6e9;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            color: #2d3436;
+
+            background: white;
+
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+
+            cursor: pointer;
+
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+
+            background-image:
+                linear-gradient(45deg, transparent 50%, #0984e3 50%),
+                linear-gradient(135deg, #0984e3 50%, transparent 50%);
+
+            background-position:
+                calc(100% - 20px) calc(50% - 3px),
+                calc(100% - 14px) calc(50% - 3px);
+
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+
+            transition: 0.2s;
+        }
+
+        select:focus {
+
+            outline: none;
+
+            border-color: #0984e3;
+
+            box-shadow:
+                0 0 0 4px rgba(9,132,227,0.15),
+                0 6px 14px rgba(0,0,0,0.12);
+        }
+
+        select:hover {
+
+            border-color: #74b9ff;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 6px 14px rgba(0,0,0,0.12),
+                0 0 8px rgba(116,185,255,0.25);
+        }
+
+        button {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                #00b894,
+                #00cec9
+            );
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        button:hover {
+
+            transform: translateY(-3px) scale(1.02);
+
+            box-shadow:
+                0 0 10px rgba(0,184,148,0.5),
+                0 0 20px rgba(0,206,201,0.4),
+                0 0 35px rgba(129,236,236,0.3);
+        }
+
+        button:active {
+
+            transform: scale(0.98);
+        }
+
+        #result {
+
+            margin-top: 25px;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            color: #2d3436;
+        }
+
+        #count {
+
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3436;
+        }
+
+        #history {
+
+            margin-top: 20px;
+            max-height: 180px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 12px;
+        }
+
+        .history-item {
+
+            padding: 8px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 8px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        #nextButton {
+
+            margin-top: 15px;
+            background: linear-gradient(
+                135deg,
+                #fdcb6e,
+                #e17055
+            );
+            display: none;
+            }
+
+        @keyframes fadeIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🌤 天気 Hit&Blow</h1>
+
+    <div class="weather-box" id="weather">
+        読み込み中...
+    </div>
+
+    <div class="select-group">
+
+        <label>地方</label>
+
+        <select id="region">
+            <option>北海道</option>
+            <option>東北</option>
+            <option>関東</option>
+            <option>中部</option>
+            <option>関西</option>
+            <option>九州</option>
+        </select>
+
+    </div>
+
+    <div class="select-group">
+
+        <label>月</label>
+
+        <select id="month">
+            <option value="3">3月</option>
+            <option value="4">4月</option>
+            <option value="9">9月</option>
+            <option value="10">10月</option>
+        </select>
+
+    </div>
+
+    <div class="select-group">
+
+        <label>天気タイプ</label>
+
+        <select id="type">
+            <option>晴れ型</option>
+            <option>雨型</option>
+            <option>変動型</option>
+            <option>荒天型</option>
+        </select>
+
+    </div>
+
+    <button onclick="submitAnswer()">
+        回答する
+    </button>
+
+    <div id="count">挑戦回数: 0</div>
+
+    <div id="history"></div>
+
+    <button onclick="nextGame()" id="nextButton">
+        次の問題へ
+    </button>
+
+    <div id="result"></div>
+
+</div>
+
+<script>
+
+let count = 0;
+let history = [];
+
+fetch('/game/start')
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById('weather').innerHTML =
+
+            `
+        <div class="weather-grid">
+
+            <div class="weather-item">
+                <div class="icon">🌡</div>
+                <div class="label">平均気温</div>
+                <div class="value">${data.temperature} ℃</div>
+            </div>
+
+            <div class="weather-item">
+                <div class="icon">☔</div>
+                <div class="label">降水量</div>
+                <div class="value">${data.rainfall} mm</div>
+            </div>
+
+            <div class="weather-item">
+                <div class="icon">☀</div>
+                <div class="label">日照時間</div>
+                <div class="value">${data.sunshine} h</div>
+            </div>
+
+        </div>
+
+        <div class="hint-box">
+    💡          ヒント: ${data.hint}
+        </div>
+        `;
+    });
+
+function submitAnswer() {
+
+    const answer = {
+
+        region: document.getElementById('region').value,
+
+        month: parseInt(
+            document.getElementById('month').value
+        ),
+
+        weatherType:
+            document.getElementById('type').value
+    };
+
+    fetch('/game/answer', {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify(answer)
+
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.clear){
+
+            document.getElementById('result')
+                .innerHTML =
+                `🎉 CLEAR!! (${data.hit} Hit)`;
+
+        } else {
+
+            document.getElementById('result')
+                .innerHTML =
+                `✅ ${data.hit} Hit`;
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>
